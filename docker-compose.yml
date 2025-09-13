@@ -1,0 +1,55 @@
+############################################
+# LEIA AQUI                                
+############################################
+# Criado por GUILHERME LAZAROTTO           
+# Youtube: www.youtube.com/@guilherme_laz  
+# Curso completo: www.curson8n.com.br      
+############################################
+
+services:
+  redis:
+    image: redis:latest
+    command: redis-server --requirepass default
+    environment:
+      REDIS_USER: default
+      REDIS_PASSWORD: default
+    ports:
+      - "6379:6379"
+
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: default
+      POSTGRES_PASSWORD: default
+      POSTGRES_DB: default
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  waha:
+    image: devlikeapro/waha:latest
+    environment:
+      WHATSAPP_DEFAULT_ENGINE: GOWS
+      WHATSAPP_HOOK_EVENTS: message
+    volumes:
+      - waha_sessions:/app/.sessions
+      - waha_media:/app/.media
+    ports:
+      - "3000:3000"
+
+    n8n:
+    image: docker.n8n.io/n8nio/n8n
+    container_name: n8n
+    ports:
+      - "5678:5678"
+    volumes:
+      - n8n_data:/home/node/.n8n
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  waha_sessions:
+  waha_media:
+  n8n_data:
+    external: true
